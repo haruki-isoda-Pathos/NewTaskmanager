@@ -1,0 +1,159 @@
+<h2>タスク一覧</h2>
+
+<div class="legend-wrapper">
+  <div class="legend">
+    タスク凡例：
+    <div class="legend-item">
+      <span class="dot def"></span>
+      <span>ノーマル</span>
+    </div>
+    <div class="legend-item">
+      <span class="dot yellow"></span>
+      <span>アラーム済</span>
+    </div>
+    <div class="legend-item">
+      <span class="dot orange"></span>
+      <span>リマインド済</span>
+    </div>
+    <div class="legend-item">
+      <span class="dot red"></span>
+      <span>期限超過</span>
+    </div>
+  </div>
+</div>
+
+<p class="legend-note">
+  ※タスクに振られた番号は優先度順
+</p>
+
+<div *ngIf="showConfirm" class="modal-overlay">
+  <div class="modal">
+    <p>
+      タスクは期限と重要性、またはあなたの指定順に並んでいます。<br>
+      「{{ pendingMoveInfo?.fromTitle }}」を<br>
+      「{{ pendingMoveInfo?.toTitle }}」と入れ替えますか？
+    </p>
+    <button (click)="confirmReorder()">入れ替える</button>
+    <button (click)="cancelReorder()">キャンセル</button>
+  </div>
+</div>
+
+<div *ngIf="board as b" class="matrix">
+  <!-- 未着手 -->
+  <div
+    cdkDropList
+    id="todo"
+    #todoList="cdkDropList"
+    [cdkDropListData]="b.todo"
+    [cdkDropListConnectedTo]="[pendingList, doingList, doneList]"
+    class="column"
+    (cdkDropListDropped)="onDrop($event)"
+  >
+    <h3>未着手</h3>
+    <div class="task-list">
+      <div class="priority-guide">
+      ↑優先<br>↓非優先
+      </div>
+    <div
+      *ngFor="let task of b.todo; let i = index; trackBy: trackById"
+      class="task-card"
+    >
+    <app-task-icon 
+    [task]="task" 
+    [displayIndex]="i + 1"
+    (taskClick)="openEditModal($event)"
+    [column]="'todo'"></app-task-icon>
+    </div>
+    </div>
+  </div>
+
+  <!-- 保留 -->
+  <div
+    cdkDropList
+    id="pending"
+    #pendingList="cdkDropList"
+    [cdkDropListData]="b.pending"
+    [cdkDropListConnectedTo]="[todoList, doingList, doneList]"
+    class="column"
+    (cdkDropListDropped)="onDrop($event)"
+  >
+    <h3>保留</h3>
+    <div class="task-list">
+        <div class="priority-guide">
+        ↑優先<br>↓非優先
+        </div>
+    <div
+      *ngFor="let task of b.pending; let i = index; trackBy: trackById"
+      class="task-card"
+    >
+    <app-task-icon 
+    [task]="task" 
+    [displayIndex]="i + 1"
+    (taskClick)="openEditModal($event)"
+    [column]="'pending'"></app-task-icon>
+    </div>
+    </div>
+  </div>
+
+  <!-- 進行中 -->
+  <div
+    cdkDropList
+    id="doing"
+    #doingList="cdkDropList"
+    [cdkDropListData]="b.doing"
+    [cdkDropListConnectedTo]="[todoList, pendingList, doneList]"
+    class="column"
+    (cdkDropListDropped)="onDrop($event)"
+  >
+    <h3>進行中</h3>
+    <div class="task-list">
+      <div class="priority-guide">
+        ↑優先<br>↓非優先
+      </div>
+    <div
+      *ngFor="let task of b.doing; let i = index; trackBy: trackById"
+      class="task-card"
+    >
+    <app-task-icon 
+    [task]="task" 
+    [displayIndex]="i + 1"
+    (taskClick)="openEditModal($event)"
+    [column]="'doing'"></app-task-icon>
+    </div>
+    </div>
+  </div>
+
+  <!-- 完了 -->
+  <div
+    cdkDropList
+    id="done"
+    #doneList="cdkDropList"
+    [cdkDropListData]="b.done"
+    [cdkDropListConnectedTo]="[todoList, pendingList, doingList]"
+    class="column"
+    (cdkDropListDropped)="onDrop($event)"
+  >
+    <h3>完了</h3>
+    <div class="task-list">
+    <div
+      *ngFor="let task of b.done; let i = index; trackBy: trackById"
+      class="task-card"
+    >
+    <app-task-icon 
+    [task]="task" 
+    [displayIndex]="i + 1"
+    (taskClick)="openEditModal($event)"
+    [column]="'done'"></app-task-icon>
+    </div>
+    </div>
+  </div>
+
+</div>
+
+<app-task-modal
+*ngIf="showModal && selectedTask"
+[task]="selectedTask"
+(save)="saveTask($event)"
+(remove)="removeTask($event)"
+(modalClose)="closeModal()"
+></app-task-modal>

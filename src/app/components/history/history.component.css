@@ -1,0 +1,138 @@
+h3 {
+    text-align: center;
+  }
+
+.history-container {
+    max-height: 80%;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+  .history {
+    padding: 10px;
+    margin-bottom: 8px;
+
+    border: 1px;
+    border-radius: 8px;
+
+    background-color: transparent;
+}
+
+.detail {
+    text-align: left;
+    font-size: 12px;
+    margin-bottom: 4px;
+} 
+
+.create {
+    color:#1fb3fd
+}
+
+.edit {
+    color:rgb(0, 255, 145);
+}
+
+.remind {
+  color:rgb(255, 136, 0);
+}
+
+.alarm {
+  color:rgb(255, 234, 0);
+}
+
+.deadline {
+    color:#ff3232;
+}
+
+.delete {
+    color:#b836f4;
+}
+
+.status {
+    color:#fb6995;
+}
+
+
+.time {
+    text-align: left;
+    font-size: 10px;
+    color: #747474;
+    margin-bottom: 4px;
+}
+
+.title {
+    text-align: left;
+    font-size: 12px;
+    color: #333333;
+}
+
+.clear-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #ff9249;
+    color: rgb(255, 255, 255);
+  }
+  
+
+  .button-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .btn-cancel {
+    background-color: #f8f9fa;
+    color: #333;
+    border: 1px solid #ddd;
+  }
+  .btn-cancel:hover {
+    background-color: #e2e6ea;
+  }
+
+.btn-delete2 {
+    background-color: #dc3545;
+    color: #ddd;
+    border: 1px solid #ddd;
+    font-weight: normal;
+    text-decoration: underline; 
+    padding: 8px;
+    margin-top: 10px;
+  }
+  .btn-delete2:hover {
+    background-color: #bd2130;
+  }
+    
+  .modal-overlay2 {
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+  
+    background: rgba(0, 0, 0, 0.4);
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    z-index: 9999;
+  }
+
+  .modal2{
+    background: white;
+    width: 50%;
+    max-width: 200px;
+    max-height: 50vh;
+    padding: 20px;
+    border-radius: 8px;
+    box-sizing: border-box;
+  }

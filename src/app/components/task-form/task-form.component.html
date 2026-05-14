@@ -1,0 +1,82 @@
+ <h2>タスク入力</h2>
+ 
+ <div class="task-form">
+    
+    <div class="form-group">
+      <label>タスク名(50字まで)※必須</label>
+      <textarea 
+      [(ngModel)]="title" 
+      name="title" 
+      placeholder="タスク名" 
+      (input)="onInputLimit($event, 50, 'title')"
+      maxlength="50" 
+      required></textarea>
+
+      <div class="char-count">
+        {{ title?.length || 0 }} / 50
+      </div>
+    </div>
+  
+    <div class="form-group">
+      <label>メモ(200字まで)</label>
+      <textarea
+      [(ngModel)]="memo" 
+      name="memo" 
+      placeholder="メモ" 
+      (input)="onInputLimit($event, 200, 'memo')"
+      maxlength="200"></textarea>
+
+      <div class="char-count">
+        {{ memo?.length || 0 }} / 200
+      </div>
+    </div>
+  
+    <div class="form-group">
+      <label>期限</label>
+      <input
+        type="datetime-local"
+        [(ngModel)]="deadline"
+        name="deadline">
+    </div>
+  
+    <div class="form-group">
+      <label>アラーム</label>
+      <select [(ngModel)]="notifyAfterMinutes" name="notifyAfterMinutes">
+        <option [ngValue]="null">なし</option>
+        <option [ngValue]="10">いまから10分後</option>
+        <option [ngValue]="30">いまから30分後</option>
+        <option [ngValue]="60">いまから1時間後</option>
+        <option [ngValue]="180">いまから3時間後</option>
+        <option [ngValue]="360">いまから6時間後</option>
+        <option [ngValue]="720">いまから12時間後</option>
+        <option [ngValue]="1440">いまから1日後</option>
+        <option [ngValue]="2880">いまから2日後</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>期限前リマインド</label>
+      <select [(ngModel)]="notifyBefore" name="notifyBefore" [disabled]="!deadline">
+        <option [ngValue]="null">なし</option>
+        <option [ngValue]="30">30分前に通知</option>
+        <option [ngValue]="60">60分前に通知</option>
+        <option [ngValue]="120">2時間前に通知</option>
+        <option [ngValue]="120">3時間前に通知</option>
+        <option [ngValue]="300">5時間前に通知</option>
+        <option [ngValue]="720">12時間前に通知</option>
+        <option [ngValue]="1440">1日前に通知</option>
+        <option [ngValue]="4320">3日前に通知</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>優先順位</label>
+      <select [(ngModel)]="priority" name="priority" >
+        <option [ngValue]="3">高</option>
+        <option [ngValue]="2">中</option>
+        <option [ngValue]="1">低</option>
+      </select>
+    </div>
+  
+    <button (click)="addTasks()" type="button">入力完了</button>
+  </div>

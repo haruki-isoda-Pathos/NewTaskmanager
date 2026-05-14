@@ -1,0 +1,23 @@
+<div 
+ class="task-icon"
+ [ngClass]="getColor()"
+ cdkDrag
+ [cdkDragData]="task"
+ (mouseenter)="onMouseEnter()"
+ (mouseleave)="onMouseLeave()"
+ (cdkDragStarted)="onDragStart()"
+ (cdkDragEnded)="onDragEnd()"
+>
+<button 
+type="button"
+class="task-button-transparent"
+(click)="onClickTask()"
+>
+{{ displayIndex }}. {{ task.title }}
+</button>
+
+  <div class="tooltip" *ngIf="showHint && !isDragging">
+    クリックで編集・削除<br>
+    ドラックで状態変更
+  </div>
+</div>

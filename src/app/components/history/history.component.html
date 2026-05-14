@@ -1,0 +1,32 @@
+<h3>操作・期限履歴</h3>
+
+<div class="history-container">
+<div *ngFor="let history of histories" class="history"  [ngClass]="history.action">
+
+    <div class="detail">
+    ●{{ history.detail }}
+    </div>
+    <div class="time">
+    {{ history.createdAt | date:'MM/dd HH:mm' }} 
+    </div>
+    <div class="title">
+    タスクタイトル：{{ history.taskTitle }}
+    </div>
+</div>
+</div>
+
+<div *ngIf="histories.length > 0" class="clear-button">
+    <button (click)="confirm()" type="button">履歴をクリア</button>
+</div>
+
+<div *ngIf="showClearConfirm" class="modal-overlay2">
+    <div class="modal2">
+      <p>
+        本当に削除しますか？
+      </p>
+      <div class="button-group">
+      <button class="btn-delete2" (click)="clearHistory()">削除</button>
+      <button class="btn-cancel" (click)="cancelRemove()">キャンセル</button>
+      </div>
+    </div>  
+</div>
