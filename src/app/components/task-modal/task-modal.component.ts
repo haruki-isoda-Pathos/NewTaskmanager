@@ -66,18 +66,17 @@ export class TaskModalComponent {
       notifyAfterMinutes: this.notifyAfterMinutes,
       notifyBefore: this.notifyBefore,
       priority: this.priority,
-      createdAt: Date.now(),
     };
-    this.save.emit(updatedTask);
 
     const changeAlarm = (this.task.notifyAfterMinutes != this.notifyAfterMinutes)
     const changeDeadline = (this.task.deadline != this.deadline)
     if (changeAlarm) {
-      this.task.alarmBaseTime = Date.now()
-      this.task.notified = false
+      updatedTask.alarmBaseTime = Date.now()
+      updatedTask.notified = false
     }
-    if (changeDeadline) this.task.reminded = false, this.task.deadlineNotified = false
-   
+    if (changeDeadline) updatedTask.reminded = false, updatedTask.deadlineNotified = false
+
+    this.save.emit(updatedTask);
   }
 
   removeTask() {
