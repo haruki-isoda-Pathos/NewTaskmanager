@@ -29,6 +29,7 @@ export class MatrixComponent implements OnInit{
     fromTitle: string;
     toTitle: string;
   } | null = null;
+  isDragging: boolean = false;
 
 constructor(
   private taskService: TaskService,
@@ -59,6 +60,20 @@ ngOnInit() {
 getSortedTasks(tasks: Task[]): Task[] {
 
       return tasks.sort((a, b) => {
+        //alert済みのもの最優先
+        const alertPriority = {
+          deadline: 3,
+          notify: 2,
+          remind: 1,
+          null: 0
+        };
+
+    const aAlert = alertPriority[a.alertState ?? 'null'];
+    const bAlert = alertPriority[b.alertState ?? 'null'];
+
+    if (aAlert !== bAlert) {
+  return bAlert - aAlert;
+}
     
         // manualOrder優先
         if (a.manualOrder != null && b.manualOrder != null) {
@@ -148,6 +163,7 @@ private resetDialog() {
 }
 
 private executeDrop(event: CdkDragDrop<Task[]>) {
+   
     // 同じカラム内の並び替え
     if (event.previousContainer === event.container) {
       moveItemInArray(
@@ -182,6 +198,10 @@ private executeDrop(event: CdkDragDrop<Task[]>) {
     };
 
     const movedTask = event.container.data[event.currentIndex];
+     //alertstate解除
+     if (event.container.id === 'done') {
+      movedTask.alertState = null;
+    }
 
     this.historyService.addHistory({
       taskId: movedTask.id,
@@ -197,8 +217,9 @@ trackById(index: number, task: Task) {
 }
 
 checkNotifications() {
+  if (this.isDragging) return;
   const now = Date.now();
-
+  let updated = false;
   Object.values(this.board)
     .flat()
     .forEach(task => {
@@ -217,6 +238,8 @@ checkNotifications() {
             `${task.title} を確認してください`
           );
           task.notified = true;
+          task.alertState = 'notify';
+          updated = true;
 
           this.historyService.addHistory({
             taskId: task.id,
@@ -236,6 +259,8 @@ checkNotifications() {
           `${task.title} の期限です`
         );
         task.deadlineNotified = true;
+        task.alertState = 'deadline';
+        updated = true;
 
         this.historyService.addHistory({
           taskId: task.id,
@@ -257,7 +282,9 @@ checkNotifications() {
             `${task.title} を確認してください`
           );
           task.reminded = true;
-
+          task.alertState = 'remind';
+          updated = true;
+          
           this.historyService.addHistory({
             taskId: task.id,
             taskTitle: task.title,
@@ -269,6 +296,17 @@ checkNotifications() {
       }
     });
     this.taskService.persistBoard();
+    if (updated) {
+      this.board = {
+        ...this.board,
+        todo: this.getSortedTasks([...this.board.todo]),
+        pending: this.getSortedTasks([...this.board.pending]),
+        doing: this.getSortedTasks([...this.board.doing]),
+        done: this.getSortedTasks([...this.board.done]),
+      };
+    
+      this.taskService.updateBoard(this.board);
+    }
 }
 
 openEditModal(task: Task) {

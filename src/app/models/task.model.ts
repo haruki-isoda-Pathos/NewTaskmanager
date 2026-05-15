@@ -13,5 +13,6 @@ export interface Task {
   notified?: boolean;
   deadlineNotified?: boolean;
   reminded?: boolean;
+  alertState?: 'deadline' | 'notify' | 'remind' | null;
 }
 

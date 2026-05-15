@@ -13,7 +13,7 @@ type="button"
 class="task-button-transparent"
 (click)="onClickTask()"
 >
-{{ displayIndex }}. {{ task.title }}
+<span class="sort">{{ priorityLabel }}</span>&ensp;{{ task.title }}
 </button>
 
   <div class="tooltip" *ngIf="showHint && !isDragging">

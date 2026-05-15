@@ -23,17 +23,16 @@
 </div>
 
 <p class="legend-note">
-  ※タスクに振られた番号は優先度順
+  ※タスクは上から有期限(期限が近いもの順)→無期限/同率は優先順位→入力順
 </p>
 
 <div *ngIf="showConfirm" class="modal-overlay">
   <div class="modal">
     <p>
       タスクは期限と重要性、またはあなたの指定順に並んでいます。<br>
-      「{{ pendingMoveInfo?.fromTitle }}」を<br>
-      「{{ pendingMoveInfo?.toTitle }}」と入れ替えますか？
+      「{{ pendingMoveInfo?.fromTitle }}」を再配置しますか？<br>
     </p>
-    <button (click)="confirmReorder()">入れ替える</button>
+    <button (click)="confirmReorder()">再配置</button>
     <button (click)="cancelReorder()">キャンセル</button>
   </div>
 </div>
@@ -48,6 +47,8 @@
     [cdkDropListConnectedTo]="[pendingList, doingList, doneList]"
     class="column"
     (cdkDropListDropped)="onDrop($event)"
+    (cdkDragStarted)="isDragging = true"
+    (cdkDragEnded)="isDragging = false"
   >
     <h3>未着手</h3>
     <div class="task-list">
@@ -55,12 +56,11 @@
       ↑優先<br>↓非優先
       </div>
     <div
-      *ngFor="let task of b.todo; let i = index; trackBy: trackById"
+      *ngFor="let task of b.todo; trackBy: trackById"
       class="task-card"
     >
     <app-task-icon 
     [task]="task" 
-    [displayIndex]="i + 1"
     (taskClick)="openEditModal($event)"
     [column]="'todo'"></app-task-icon>
     </div>
@@ -76,6 +76,8 @@
     [cdkDropListConnectedTo]="[todoList, doingList, doneList]"
     class="column"
     (cdkDropListDropped)="onDrop($event)"
+    (cdkDragStarted)="isDragging = true"
+    (cdkDragEnded)="isDragging = false"
   >
     <h3>保留</h3>
     <div class="task-list">
@@ -83,12 +85,11 @@
         ↑優先<br>↓非優先
         </div>
     <div
-      *ngFor="let task of b.pending; let i = index; trackBy: trackById"
+      *ngFor="let task of b.pending; trackBy: trackById"
       class="task-card"
     >
     <app-task-icon 
     [task]="task" 
-    [displayIndex]="i + 1"
     (taskClick)="openEditModal($event)"
     [column]="'pending'"></app-task-icon>
     </div>
@@ -104,6 +105,8 @@
     [cdkDropListConnectedTo]="[todoList, pendingList, doneList]"
     class="column"
     (cdkDropListDropped)="onDrop($event)"
+    (cdkDragStarted)="isDragging = true"
+    (cdkDragEnded)="isDragging = false"
   >
     <h3>進行中</h3>
     <div class="task-list">
@@ -111,12 +114,11 @@
         ↑優先<br>↓非優先
       </div>
     <div
-      *ngFor="let task of b.doing; let i = index; trackBy: trackById"
+      *ngFor="let task of b.doing; trackBy: trackById"
       class="task-card"
     >
     <app-task-icon 
     [task]="task" 
-    [displayIndex]="i + 1"
     (taskClick)="openEditModal($event)"
     [column]="'doing'"></app-task-icon>
     </div>
@@ -132,16 +134,17 @@
     [cdkDropListConnectedTo]="[todoList, pendingList, doingList]"
     class="column"
     (cdkDropListDropped)="onDrop($event)"
+    (cdkDragStarted)="isDragging = true"
+    (cdkDragEnded)="isDragging = false"
   >
     <h3>完了</h3>
     <div class="task-list">
     <div
-      *ngFor="let task of b.done; let i = index; trackBy: trackById"
+      *ngFor="let task of b.done; trackBy: trackById"
       class="task-card"
     >
     <app-task-icon 
     [task]="task" 
-    [displayIndex]="i + 1"
     (taskClick)="openEditModal($event)"
     [column]="'done'"></app-task-icon>
     </div>

@@ -26,6 +26,19 @@ export class TaskIconComponent {
      private historyService: HistoryService
   ) {}
 
+  get priorityLabel(): string {
+    switch (this.task.priority) {
+      case 3:
+        return '高';
+      case 2:
+        return '中';
+      case 1:
+        return '低';
+      default:
+        return '-';
+    }
+  }
+
     onMouseEnter() {
       if (!this.isDragging) {
         this.showHint = true;
