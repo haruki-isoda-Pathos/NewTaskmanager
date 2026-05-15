@@ -1,0 +1,13 @@
+.filter{
+    display: flex;
+    justify-content: center;
+    padding: 1px
+}
+
+.filter select {
+    border: none;
+    outline: none;
+    background: transparent;
+    cursor:pointer;
+    color: #1c1c1cc3;
+}

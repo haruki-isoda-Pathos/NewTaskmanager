@@ -1,7 +1,11 @@
 <h3>操作・期限履歴</h3>
 
+<app-history-filter
+  (filterChanged)="onFilterChanged($event)"
+></app-history-filter>
+
 <div class="history-container">
-<div *ngFor="let history of histories" class="history"  [ngClass]="history.action">
+<div *ngFor="let history of filteredHistories" class="history"  [ngClass]="history.action">
 
     <div class="detail">
     ●{{ history.detail }}
@@ -16,7 +20,7 @@
 </div>
 
 <div *ngIf="histories.length > 0" class="clear-button">
-    <button (click)="confirm()" type="button">履歴をクリア</button>
+    <button (click)="confirm()" type="button">全履歴をクリア</button>
 </div>
 
 <div *ngIf="showClearConfirm" class="modal-overlay2">
@@ -30,6 +34,3 @@
       </div>
     </div>  
 </div>
-<app-history-filter
-  (filterChange)="applyFilter($event)"
-></app-history-filter>

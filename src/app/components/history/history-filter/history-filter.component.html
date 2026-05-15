@@ -1,0 +1,15 @@
+<div class="filter">
+    <select 
+    [(ngModel)]="filterOption" 
+    (ngModelChange)="onFilterChange()"
+    name="filterOption">
+      <option [ngValue]="null">フィルター/なし</option>
+      <option [ngValue]="'create'">●タスクを追加</option>
+      <option [ngValue]="'edit'">●タスクを編集</option>)
+      <option [ngValue]="'delete'">●タスクを削除</option>
+      <option [ngValue]="'status'">●ステータス変更</option>
+      <option [ngValue]="'deadline'">●タスク期限到来</option>
+      <option [ngValue]="'remind'">●リマインド</option>
+      <option [ngValue]="'alarm'">●アラーム</option>
+    </select>
+  </div>
