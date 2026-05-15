@@ -78,5 +78,17 @@
 
   .sort {
     margin-right: auto;
+    font-size: 85%;
+  }
+  priority-high, .高 {
+    color: #ff4d4d;          /* 文字色：赤 */
+  }
+  
+  .priority-medium, .中 {
+    color: #ff9f43;          /* 文字色：オレンジ */
+  }
+  
+  .priority-low, .低 {
+    color: #2bbf69;          /* 文字色：緑 */
   }
 
