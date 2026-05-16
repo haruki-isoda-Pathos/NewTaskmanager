@@ -3,10 +3,11 @@
  [ngClass]="getColor()"
  cdkDrag
  [cdkDragData]="task"
- (mouseenter)="onMouseEnter()"
- (mouseleave)="onMouseLeave()"
  (cdkDragStarted)="onDragStart()"
  (cdkDragEnded)="onDragEnd()"
+ [appTooltip]="!isDragging 
+ ? 'クリックして編集と削除\nドラッグでタスクのステータス変更'
+ : ''"
 >
 <button 
 type="button"
@@ -16,8 +17,4 @@ class="task-button-transparent"
 <span class="sort" [ngClass]="priorityLabel">{{ priorityLabel }}</span>&ensp;{{ task.title }}
 </button>
 
-  <div class="tooltip" *ngIf="showHint && !isDragging">
-    クリックで編集・削除<br>
-    ドラッグで状態変更
-  </div>
 </div>

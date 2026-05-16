@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TooltipDirective }from '../../shared/tooltip/tooltip.directive'
 import { HistoryService } from '../../services/history.service'
 import { Task } from '../../models/task.model';
 
@@ -9,7 +10,8 @@ import { Task } from '../../models/task.model';
   standalone: true,
   imports: [
     CommonModule,
-    DragDropModule   
+    DragDropModule,
+    TooltipDirective   
   ],
   templateUrl: './task-icon.component.html',
   styleUrls: ['./task-icon.component.css']
@@ -17,7 +19,7 @@ import { Task } from '../../models/task.model';
 
 export class TaskIconComponent {
   @Input() task!: Task;
-  showHint = false;
+
   isDragging = false;
   
   @Input() displayIndex!: number;
@@ -38,20 +40,9 @@ export class TaskIconComponent {
         return '-';
     }
   }
-
-    onMouseEnter() {
-      if (!this.isDragging) {
-        this.showHint = true;
-      }
-    }
-  
-    onMouseLeave() {
-      this.showHint = false;
-    }
   
     onDragStart() {
       this.isDragging = true;
-      this.showHint = false;
     }
   
     onDragEnd() {
