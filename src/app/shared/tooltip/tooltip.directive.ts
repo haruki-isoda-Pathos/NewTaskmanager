@@ -64,4 +64,9 @@ export class TooltipDirective {
     this.overlayRef?.dispose();
     this.overlayRef = undefined;
   }
+
+  @HostListener('document:pointerdown')
+forceHide() {
+  this.hide();
+}
 }

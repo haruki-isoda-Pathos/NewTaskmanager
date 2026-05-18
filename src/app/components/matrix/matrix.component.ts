@@ -45,10 +45,10 @@ ngOnInit() {
       this.taskService.board$.subscribe(board => {
         this.board = {
           ...board,
-          todo: this.getSortedTasks([...board.todo]),
-          pending: this.getSortedTasks([...board.pending]),
-          doing: this.getSortedTasks([...board.doing]),
-          done: this.getSortedTasks([...board.done]),
+          todo: this.getSortedTasks([...board.todo], 'todo'),
+          pending: this.getSortedTasks([...board.pending], 'pending'),
+          doing: this.getSortedTasks([...board.doing], 'doing'),
+          done: this.getSortedTasks([...board.done], 'done'),
         };
        });
 
@@ -58,9 +58,10 @@ ngOnInit() {
        });
      }    
 
-getSortedTasks(tasks: Task[]): Task[] {
+getSortedTasks(tasks: Task[], columnId?: string): Task[] {
 
       return tasks.sort((a, b) => {
+      
         //alert済みのもの最優先
         const alertPriority = {
           deadline: 3,
@@ -112,11 +113,11 @@ getSortedTasks(tasks: Task[]): Task[] {
           }
         }
     
-        // priority高い順
+        // priority高い順(done除外)
         if (a.priority !== b.priority) {
           return b.priority - a.priority;
         }
-    
+        
         // 最後は作成順
         return a.createdAt - b.createdAt;
       });
@@ -127,7 +128,9 @@ onDrop(event: CdkDragDrop<Task[]>) {
         event.previousIndex === event.currentIndex
       ) { return; }
       // 同一カラム内だけ確認したい場合
-      if (event.previousContainer === event.container) {
+      if (event.previousContainer === event.container &&
+        event.container.id !== 'done'
+      ) {
         this.pendingDrop = event;
         this.showConfirm = true;
       const movedTask = event.previousContainer.data[event.previousIndex];
@@ -172,11 +175,12 @@ private executeDrop(event: CdkDragDrop<Task[]>) {
         event.previousIndex,
         event.currentIndex
       );
-
+    
       event.container.data.forEach((task, index) => {
         task.manualOrder = index;
       });
-    } 
+    }
+     
     // カラム間移動
     else {
       transferArrayItem(
@@ -185,6 +189,7 @@ private executeDrop(event: CdkDragDrop<Task[]>) {
         event.previousIndex,
         event.currentIndex
       );
+      
       event.container.data.forEach((task, index) => {
         task.manualOrder = index;
       });
@@ -300,10 +305,10 @@ checkNotifications() {
     if (updated) {
       this.board = {
         ...this.board,
-        todo: this.getSortedTasks([...this.board.todo]),
-        pending: this.getSortedTasks([...this.board.pending]),
-        doing: this.getSortedTasks([...this.board.doing]),
-        done: this.getSortedTasks([...this.board.done]),
+        todo: this.getSortedTasks([...this.board.todo], 'todo'),
+        pending: this.getSortedTasks([...this.board.pending], 'pending'),
+        doing: this.getSortedTasks([...this.board.doing], 'doing'),
+        done: this.getSortedTasks([...this.board.done], 'done'),
       };
     
       this.taskService.updateBoard(this.board);
