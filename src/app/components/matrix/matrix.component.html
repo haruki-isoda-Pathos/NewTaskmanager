@@ -132,12 +132,17 @@
     #doneList="cdkDropList"
     [cdkDropListData]="b.done"
     [cdkDropListConnectedTo]="[todoList, pendingList, doingList]"
-    class="column"
+    class="column done-column"
     (cdkDropListDropped)="onDrop($event)"
     (cdkDragStarted)="isDragging = true"
     (cdkDragEnded)="isDragging = false"
   >
     <h3>完了</h3>
+
+    <div *ngIf="b.done.length > 4" class="done-clear-button">
+      <button type="button" (click)="confirmDoneClear()" type="button">クリア</button>
+  </div>
+
     <div class="task-list">
     <div
       *ngFor="let task of b.done; trackBy: trackById"
@@ -160,3 +165,14 @@
 (remove)="removeTask($event)"
 (modalClose)="closeModal()"
 ></app-task-modal>
+
+<div *ngIf="showDoneClearConfirm" class="modal-overlay">
+  <div class="modal2">
+    <p>
+      完了タスクをすべて削除しますか？
+    </p>
+    <div class="button-group">
+      <button class="btn-delete2" (click)="clearDoneTasks()">削除</button>
+      <button class="btn-cancel" (click)="cancelDoneClear()">キャンセル</button>
+  </div>
+</div>

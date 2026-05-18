@@ -30,6 +30,7 @@ export class MatrixComponent implements OnInit{
     toTitle: string;
   } | null = null;
   isDragging: boolean = false;
+  showDoneClearConfirm = false;
 
 constructor(
   private taskService: TaskService,
@@ -345,6 +346,32 @@ removeTask(task: Task) {
 
 closeModal() {
   this.showModal = false;
+}
+
+confirmDoneClear() {
+  this.showDoneClearConfirm = true;
+}
+
+cancelDoneClear() {
+  this.showDoneClearConfirm = false;
+}
+
+clearDoneTasks() {
+  const doneTasks = [...this.board.done];
+  doneTasks.forEach(task => {
+    this.historyService.addHistory({
+      taskId: task.id,
+      taskTitle: task.title,
+      action: 'delete',
+      detail: '完了カラム一括削除',
+      createdAt: new Date()
+    });
+  });
+  this.taskService.clearDoneTasks();
+  this.showDoneClearConfirm = false;
+  this.notificationService.notify(
+    '完了タスクを削除しました'
+  );
 }
 
 }

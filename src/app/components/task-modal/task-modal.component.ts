@@ -56,6 +56,17 @@ export class TaskModalComponent {
     this.notifyBefore = this.task.notifyBefore ?? null;
     this.priority = this.task.priority;
   }
+
+  get hasChanges(): boolean {
+    return (
+      this.title !== this.task.title ||
+      this.memo !== this.task.memo ||
+      this.deadline !== this.task.deadline ||
+      this.notifyAfterMinutes !== this.task.notifyAfterMinutes ||
+      this.notifyBefore !== this.task.notifyBefore ||
+      this.priority !== this.task.priority
+    );
+  }
   
   saveTask() {
     const updatedTask: Task = {

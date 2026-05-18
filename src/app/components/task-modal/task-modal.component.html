@@ -86,7 +86,7 @@
       <button type="button" class="btn-cancel" (click)="modalClose.emit()">
         キャンセル
       </button>
-      <button type="button" class="btn-save" (click)="saveTask()">
+      <button type="button" class="btn-save" (click)="saveTask()" [disabled]="!hasChanges">
         保存する
       </button>
     </div>

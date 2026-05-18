@@ -97,5 +97,13 @@ export class TaskService {
     );
   }
 
+  clearDoneTasks() {
+    this.board = {
+      ...this.board,
+      done: []
+    };
+    this.subject.next(this.board);
+    this.saveBoard();
+  }
 
 }
