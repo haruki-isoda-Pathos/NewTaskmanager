@@ -50,6 +50,7 @@
   .sort {
     margin-right: auto;
     font-size: 85%;
+    background-color: rgb(245, 245, 245);
   }
   priority-high, .高 {
     color: #ff4d4d;          /* 文字色：赤 */

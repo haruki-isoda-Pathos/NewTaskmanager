@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TooltipDirective }from '../../shared/tooltip/tooltip.directive'
+import { TaskModalComponent } from '../task-modal/task-modal.component'
 import { HistoryService } from '../../services/history.service'
 import { Task } from '../../models/task.model';
 
@@ -11,7 +12,8 @@ import { Task } from '../../models/task.model';
   imports: [
     CommonModule,
     DragDropModule,
-    TooltipDirective   
+    TooltipDirective,
+    TaskModalComponent   
   ],
   templateUrl: './task-icon.component.html',
   styleUrls: ['./task-icon.component.css']
@@ -75,7 +77,7 @@ export class TaskIconComponent {
     }
     // アラーム（作成後）
     if (this.task.notifyAfterMinutes != null) {
-      const notifyTime = this.task.createdAt + this.task.notifyAfterMinutes * 60 * 1000;
+      const notifyTime =  (this.task.alarmBaseTime ?? this.task.createdAt) + this.task.notifyAfterMinutes * 60 * 1000;
       if (now >= notifyTime) {
         return 'yellow';
       }
