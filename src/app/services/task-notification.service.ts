@@ -9,6 +9,7 @@ import { BrowserNotificationService } from './browser-notification.service';
 export class TaskNotificationService {
   private board: Board | null = null;
   private isDragging = false;
+  private editingTaskId: string | null = null;
 
   constructor(
     private taskService: TaskService,
@@ -27,6 +28,14 @@ export class TaskNotificationService {
     this.isDragging = dragging;
   }
 
+  setEditingTask(taskId: string | null) {
+    this.editingTaskId = taskId 
+  }
+
+  isEditingTask(taskId: string): boolean {
+    return this.editingTaskId === taskId;
+  }
+
   checkNotifications() {
     if (this.isDragging || !this.board) return;
 
@@ -37,6 +46,8 @@ export class TaskNotificationService {
       .flat()
       .forEach((task) => {
         if (this.board!.done.includes(task)) return;
+
+         if (task.id === this.editingTaskId) return;
 
         const due = task.deadline ? new Date(task.deadline).getTime() : null;
 

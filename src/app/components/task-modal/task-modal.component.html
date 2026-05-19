@@ -9,7 +9,7 @@
         [(ngModel)]="title" 
         name="title" 
         placeholder="タスク名" 
-        (input)="onInputLimit($event, 50, 'title')"
+        (keydown)="onKeydownLimit($event, 50)"
         maxlength="50" 
         required></textarea>
   
@@ -24,7 +24,7 @@
         [(ngModel)]="memo" 
         name="memo" 
         placeholder="メモ" 
-        (input)="onInputLimit($event, 200, 'memo')"
+        (keydown)="onKeydownLimit($event, 200)"
         maxlength="200"></textarea>
   
         <div class="char-count">
@@ -33,7 +33,7 @@
       </div>
     
       <div class="form-group">
-        <label>期限 ※必須</label>
+        <label>期限</label>
         <input
           type="datetime-local"
           [(ngModel)]="deadline"

@@ -213,11 +213,13 @@ trackById(index: number, task: Task) {
 openEditModal(task: Task) {
   this.selectedTask = task;
   this.showModal = true;
+  this.taskNotificationService.setEditingTask(task.id);
 }
 
 saveTask(updatedTask: Task) {
   this.taskService.updateTask(updatedTask);
   this.closeModal();
+  this.taskNotificationService.setEditingTask(null);
   this.notificationService.notify("タスクを編集しました");
 
   this.historyService.addHistory({
@@ -232,6 +234,7 @@ saveTask(updatedTask: Task) {
 removeTask(task: Task) {
   this.taskService.deleteTask(task.id);
   this.closeModal();
+  this.taskNotificationService.setEditingTask(null);
   this.notificationService.notify("タスクを削除しました");
 
   this.historyService.addHistory({
@@ -246,6 +249,7 @@ removeTask(task: Task) {
 
 closeModal() {
   this.showModal = false;
+  this.taskNotificationService.setEditingTask(null);
 }
 
 confirmDoneClear() {

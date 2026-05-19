@@ -24,18 +24,17 @@ export class TaskFormComponent {
   priority = 1
   manualOrder?: number;
 
-  //UI用
-  onInputLimit(event: Event, max: number, field: 'title' | 'memo') {
+   //UI用
+   onKeydownLimit(event: KeyboardEvent, max: number) {
     const target = event.target as HTMLTextAreaElement;
-  
-    if (target.value.length > max) {
-      target.value = target.value.slice(0, max);
+    // バックスペース、削除、矢印キー、コピー＆ペースト（Ctrl/Cmd）などの制御キーは常に許可する
+    const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab'];
+    if (allowedKeys.includes(event.key) || event.ctrlKey || event.metaKey) {
+      return;
     }
-  
-    if (field === 'title') {
-      this.title = target.value;
-    } else {
-      this.memo = target.value;
+    // すでに最大文字数に達している場合、それ以上の文字入力を一切無視する
+    if (target.value.length >= max) {
+      event.preventDefault(); // 入力イベントそのものをキャンセル
     }
   }
 
@@ -58,7 +57,7 @@ export class TaskFormComponent {
     this.browserNotificationService.requestPermission();
 
     if (!this.title) {
-      this.notificationService.notify('必須項目を入力してください');
+      this.notificationService.notify('タスク名（必須）を入力してください');
       return;
     }
   
@@ -75,9 +74,13 @@ export class TaskFormComponent {
       deadlineNotified: false
     };
     this.taskService.addTask(newTask);
-    this.notificationService.notify("タスクを追加しました");
+    this.notificationService.notify("タスクを「未着手」に追加しました");
     this.title = ''
     this.memo = ''
+    this.deadline = ''
+    this.notifyAfterMinutes = null;
+    this.notifyBefore = null;
+    this.priority = 1
 
     this.historyService.addHistory({
       taskId: newTask.id,

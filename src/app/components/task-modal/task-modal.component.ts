@@ -22,20 +22,19 @@ export class TaskModalComponent {
   priority = 1;
   showRemoveConfirm = false;
 
-    //UI用
-    onInputLimit(event: Event, max: number, field: 'title' | 'memo') {
-      const target = event.target as HTMLTextAreaElement;
-    
-      if (target.value.length > max) {
-        target.value = target.value.slice(0, max);
-      }
-    
-      if (field === 'title') {
-        this.title = target.value;
-      } else {
-        this.memo = target.value;
-      }
+  //UI用
+  onKeydownLimit(event: KeyboardEvent, max: number) {
+    const target = event.target as HTMLTextAreaElement;
+    // バックスペース、削除、矢印キー、コピー＆ペースト（Ctrl/Cmd）などの制御キーは常に許可する
+    const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab'];
+    if (allowedKeys.includes(event.key) || event.ctrlKey || event.metaKey) {
+      return;
     }
+    // すでに最大文字数に達している場合、それ以上の文字入力を一切無視する
+    if (target.value.length >= max) {
+      event.preventDefault(); // 入力イベントそのものをキャンセル
+    }
+  }
   
     //UI用
     autoResize(event: Event) {

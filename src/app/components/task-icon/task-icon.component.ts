@@ -4,6 +4,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TooltipDirective }from '../../shared/tooltip/tooltip.directive'
 import { TaskModalComponent } from '../task-modal/task-modal.component'
 import { Task } from '../../models/task.model';
+import { TaskNotificationService } from '../../services/task-notification.service';
 
 @Component({
   selector: 'app-task-icon',
@@ -19,6 +20,11 @@ import { Task } from '../../models/task.model';
 })
 
 export class TaskIconComponent {
+
+  constructor(
+    private taskNotificationService:TaskNotificationService
+  ) {}
+
   @Input() task!: Task;
 
   isDragging = false;
@@ -49,7 +55,16 @@ export class TaskIconComponent {
 
   @Input() column!: 'todo' | 'pending' | 'doing' | 'done';
 
+
   getColor(): string {
+
+    if (
+      this.taskNotificationService
+        .isEditingTask(this.task.id)
+    ) {
+      return 'default';
+    }
+  
 
     if (this.column === 'done') {
       return 'default';
