@@ -75,6 +75,27 @@ export class TaskService {
     this.subject.next(this.board);
     this.saveBoard()
   }
+
+  promoteTask(task: Task, columnTasks: Task[]) {
+
+    columnTasks.forEach(t => {
+      if (t.id !== task.id) {
+        t.manualOrder = (t.manualOrder ?? 0) + 1;
+      }
+    });
+    task.manualOrder = 0;
+
+    // 正規化
+    columnTasks
+      .sort((a, b) =>
+        (a.manualOrder ?? 0) -
+        (b.manualOrder ?? 0)
+      )
+      .forEach((t, index) => {
+        t.manualOrder = index;
+      });
+    this.persistBoard();
+  }
   
   private loadBoard(): Board {
     const saved =

@@ -64,21 +64,6 @@ setDragging(dragging: boolean) {
 getSortedTasks(tasks: Task[], columnId?: string): Task[] {
 
       return tasks.sort((a, b) => {
-      
-        //alert済みのもの最優先
-        const alertPriority = {
-          deadline: 3,
-          notify: 2,
-          remind: 1,
-          null: 0
-        };
-
-    const aAlert = alertPriority[a.alertState ?? 'null'];
-    const bAlert = alertPriority[b.alertState ?? 'null'];
-
-    if (aAlert !== bAlert) {
-  return bAlert - aAlert;
-}
     
         // manualOrder優先
         if (a.manualOrder != null && b.manualOrder != null) {

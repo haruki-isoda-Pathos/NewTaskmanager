@@ -55,6 +55,13 @@ export class TaskNotificationService {
             );
             task.notified = true;
             task.alertState = 'notify';
+
+            const columnTasks = Object.values(this.board!)
+            .find(column => column.includes(task));
+            if (columnTasks) {
+              this.taskService.promoteTask(task, columnTasks);
+            } 
+
             updated = true;
 
             this.historyService.addHistory({
@@ -75,6 +82,13 @@ export class TaskNotificationService {
           );
           task.deadlineNotified = true;
           task.alertState = 'deadline';
+
+          const columnTasks = Object.values(this.board!)
+            .find(column => column.includes(task));
+            if (columnTasks) {
+              this.taskService.promoteTask(task, columnTasks);
+            } 
+
           updated = true;
 
           this.historyService.addHistory({
@@ -99,6 +113,13 @@ export class TaskNotificationService {
             );
             task.reminded = true;
             task.alertState = 'remind';
+
+            const columnTasks = Object.values(this.board!)
+            .find(column => column.includes(task));
+            if (columnTasks) {
+              this.taskService.promoteTask(task, columnTasks);
+            } 
+
             updated = true;
 
             this.historyService.addHistory({
@@ -112,8 +133,8 @@ export class TaskNotificationService {
         }
       });
 
-    this.taskService.persistBoard();
     if (updated) {
+      this.taskService.persistBoard();
       this.taskService.updateBoard(this.board);
     }
   }
