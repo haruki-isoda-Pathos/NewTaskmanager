@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Task } from '../models/task.model';
+import { compareTasksByRules } from '../utils/task-sort.util';
 
 export interface Board {
   todo: Task[];
@@ -77,23 +78,17 @@ export class TaskService {
   }
 
   promoteTask(task: Task, columnTasks: Task[]) {
+    columnTasks.sort(compareTasksByRules);
 
-    columnTasks.forEach(t => {
-      if (t.id !== task.id) {
-        t.manualOrder = (t.manualOrder ?? 0) + 1;
-      }
+    const index = columnTasks.findIndex(t => t.id === task.id);
+    if (index > 0) {
+      columnTasks.splice(index, 1);
+      columnTasks.unshift(task);
+    }
+
+    columnTasks.forEach((t, i) => {
+      t.manualOrder = i;
     });
-    task.manualOrder = 0;
-
-    // 正規化
-    columnTasks
-      .sort((a, b) =>
-        (a.manualOrder ?? 0) -
-        (b.manualOrder ?? 0)
-      )
-      .forEach((t, index) => {
-        t.manualOrder = index;
-      });
     this.persistBoard();
   }
   

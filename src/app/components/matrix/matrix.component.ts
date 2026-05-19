@@ -9,6 +9,7 @@ import { NotificationService } from '../../services/notification.service'
 import { HistoryService } from '../../services/history.service'
 import { TaskNotificationService } from '../../services/task-notification.service'
 import { Task } from '../../models/task.model';
+import { compareTasks } from '../../utils/task-sort.util';
 
 @Component({
   selector: 'app-matrix',
@@ -61,54 +62,8 @@ setDragging(dragging: boolean) {
   this.taskNotificationService.setDragging(dragging);
 }
 
-getSortedTasks(tasks: Task[], columnId?: string): Task[] {
-
-      return tasks.sort((a, b) => {
-    
-        // manualOrder優先
-        if (a.manualOrder != null && b.manualOrder != null) {
-          return a.manualOrder - b.manualOrder;
-        }
-    
-        if (a.manualOrder != null) return -1;
-        if (b.manualOrder != null) return 1;
-    
-        // deadline有無
-        const aHasDeadline = !!a.deadline;
-        const bHasDeadline = !!b.deadline;
-    
-        // deadlineあり優先
-        if (aHasDeadline && !bHasDeadline) {
-          return -1;
-        }
-    
-        if (!aHasDeadline && bHasDeadline) {
-          return 1;
-        }
-    
-        // 両方deadlineあり
-        if (aHasDeadline && bHasDeadline) {
-    
-          const aDue =
-            new Date(a.deadline!).getTime();
-    
-          const bDue =
-            new Date(b.deadline!).getTime();
-    
-          // deadline近い順
-          if (aDue !== bDue) {
-            return aDue - bDue;
-          }
-        }
-    
-        // priority高い順(done除外)
-        if (a.priority !== b.priority) {
-          return b.priority - a.priority;
-        }
-        
-        // 最後は作成順
-        return a.createdAt - b.createdAt;
-      });
+getSortedTasks(tasks: Task[], _columnId?: string): Task[] {
+      return tasks.sort(compareTasks);
     }
      
 onDrop(event: CdkDragDrop<Task[]>) {
