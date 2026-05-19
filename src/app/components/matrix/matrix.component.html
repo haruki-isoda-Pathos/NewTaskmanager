@@ -47,8 +47,8 @@
     [cdkDropListConnectedTo]="[pendingList, doingList, doneList]"
     class="column"
     (cdkDropListDropped)="onDrop($event)"
-    (cdkDragStarted)="isDragging = true"
-    (cdkDragEnded)="isDragging = false"
+    (cdkDragStarted)="setDragging(true)"
+    (cdkDragEnded)="setDragging(false)"
   >
     <h3>未着手</h3>
     <div class="task-list">
@@ -76,8 +76,8 @@
     [cdkDropListConnectedTo]="[todoList, doingList, doneList]"
     class="column"
     (cdkDropListDropped)="onDrop($event)"
-    (cdkDragStarted)="isDragging = true"
-    (cdkDragEnded)="isDragging = false"
+    (cdkDragStarted)="setDragging(true)"
+    (cdkDragEnded)="setDragging(false)"
   >
     <h3>保留</h3>
     <div class="task-list">
@@ -105,8 +105,8 @@
     [cdkDropListConnectedTo]="[todoList, pendingList, doneList]"
     class="column"
     (cdkDropListDropped)="onDrop($event)"
-    (cdkDragStarted)="isDragging = true"
-    (cdkDragEnded)="isDragging = false"
+    (cdkDragStarted)="setDragging(true)"
+    (cdkDragEnded)="setDragging(false)"
   >
     <h3>進行中</h3>
     <div class="task-list">
@@ -134,8 +134,8 @@
     [cdkDropListConnectedTo]="[todoList, pendingList, doingList]"
     class="column done-column"
     (cdkDropListDropped)="onDrop($event)"
-    (cdkDragStarted)="isDragging = true"
-    (cdkDragEnded)="isDragging = false"
+    (cdkDragStarted)="setDragging(true)"
+    (cdkDragEnded)="setDragging(false)"
   >
     <h3>完了</h3>
 

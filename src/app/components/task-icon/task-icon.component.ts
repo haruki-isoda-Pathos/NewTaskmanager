@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TooltipDirective }from '../../shared/tooltip/tooltip.directive'
 import { TaskModalComponent } from '../task-modal/task-modal.component'
-import { HistoryService } from '../../services/history.service'
 import { Task } from '../../models/task.model';
 
 @Component({
@@ -26,10 +25,6 @@ export class TaskIconComponent {
   
   @Input() displayIndex!: number;
   
-  constructor(
-     private historyService: HistoryService
-  ) {}
-
   get priorityLabel(): string {
     switch (this.task.priority) {
       case 3:

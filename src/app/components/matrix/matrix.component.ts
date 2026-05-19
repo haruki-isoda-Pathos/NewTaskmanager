@@ -5,9 +5,9 @@ import { interval } from 'rxjs';
 import { TaskIconComponent } from '../task-icon/task-icon.component'
 import { TaskModalComponent } from '../task-modal/task-modal.component'
 import { TaskService, Board } from '../../services/task.service';
-import { BrowserNotificationService } from '../../services/browser-notification.service'
 import { NotificationService } from '../../services/notification.service'
 import { HistoryService } from '../../services/history.service'
+import { TaskNotificationService } from '../../services/task-notification.service'
 import { Task } from '../../models/task.model';
 
 @Component({
@@ -36,12 +36,11 @@ constructor(
   private taskService: TaskService,
   private notificationService: NotificationService,
   private cdr: ChangeDetectorRef,
-  private browserNotificationService: BrowserNotificationService,
-  private historyService: HistoryService
+  private historyService: HistoryService,
+  private taskNotificationService: TaskNotificationService
 ) {}
 
 ngOnInit() {
-  this.browserNotificationService.requestPermission();
       this.taskService.board$.subscribe(board => {
         this.board = {
           ...board,
@@ -53,10 +52,14 @@ ngOnInit() {
        });
 
        interval(1000).subscribe(() => {
-        this.cdr.detectChanges(); // 再描画トリガー
-        this.checkNotifications();
+        this.cdr.detectChanges();
        });
-     }    
+     }
+
+setDragging(dragging: boolean) {
+  this.isDragging = dragging;
+  this.taskNotificationService.setDragging(dragging);
+}
 
 getSortedTasks(tasks: Task[], columnId?: string): Task[] {
 
@@ -220,99 +223,6 @@ private executeDrop(event: CdkDragDrop<Task[]>) {
 
 trackById(index: number, task: Task) {
   return task.id;
-}
-
-checkNotifications() {
-  if (this.isDragging) return;
-  const now = Date.now();
-  let updated = false;
-  Object.values(this.board)
-    .flat()
-    .forEach(task => {
-      // done除外
-      if (this.board.done.includes(task)) return;
-      const due = task.deadline ? new Date(task.deadline).getTime() : null;
-      // 通知
-      if (task.notifyAfterMinutes != null && !task.notified) {
-        const notifyTime =
-        (task.alarmBaseTime ?? task.createdAt) + task.notifyAfterMinutes * 60 * 1000;
-        
-          if (now >= notifyTime) {
-          this.notificationService.notify("アラームが反応しているタスクがあります");
-          this.browserNotificationService.show(
-            'アラーム',
-            `${task.title} を確認してください`
-          );
-          task.notified = true;
-          task.alertState = 'notify';
-          updated = true;
-
-          this.historyService.addHistory({
-            taskId: task.id,
-            taskTitle: task.title,
-            action: 'alarm',
-            detail: 'アラーム',
-            createdAt: new Date()
-          });
-          
-        }
-      }
-      // 期限
-      if (due != null && now >= due && !task.deadlineNotified) {
-        this.notificationService.notify("期限を超過したタスクがあります");
-        this.browserNotificationService.show(
-          '期限超過',
-          `${task.title} の期限です`
-        );
-        task.deadlineNotified = true;
-        task.alertState = 'deadline';
-        updated = true;
-
-        this.historyService.addHistory({
-          taskId: task.id,
-          taskTitle: task.title,
-          action: 'deadline',
-          detail: 'タスク期限到来',
-          createdAt: new Date()
-        });
-      }
-      //　リマインド
-      if (due != null && task.notifyBefore != null && !task.reminded) {
-        const remindTime =
-          due - task.notifyBefore * 60 * 1000;
-        
-          if (now >= remindTime && now < due) {
-          this.notificationService.notify("リマインドされたタスクがあります");
-          this.browserNotificationService.show(
-            'リマインド',
-            `${task.title} を確認してください`
-          );
-          task.reminded = true;
-          task.alertState = 'remind';
-          updated = true;
-          
-          this.historyService.addHistory({
-            taskId: task.id,
-            taskTitle: task.title,
-            action: 'remind',
-            detail: 'リマインド',
-            createdAt: new Date()
-          });
-        }
-      }
-    });
-    this.taskService.persistBoard();
-    if (updated) {
-      this.board = {
-        ...this.board,
-        todo: this.getSortedTasks([...this.board.todo], 'todo'),
-        pending: this.getSortedTasks([...this.board.pending], 'pending'),
-        doing: this.getSortedTasks([...this.board.doing], 'doing'),
-        done: this.getSortedTasks([...this.board.done], 'done'),
-      };
-    
-      this.taskService.updateBoard(this.board);
-    }
 }
 
 openEditModal(task: Task) {

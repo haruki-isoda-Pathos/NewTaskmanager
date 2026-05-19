@@ -1,63 +1,43 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { HistoryService, History } from '../../services/history.service';
-import { HistoryFilterComponent } from './history-filter/history-filter.component'
+import { Component, computed, inject, signal } from '@angular/core';
+import { HistoryService } from '../../services/history.service';
+import { HistoryFilterComponent } from './history-filter/history-filter.component';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports:[CommonModule, HistoryFilterComponent],
+  imports: [CommonModule, HistoryFilterComponent],
   templateUrl: './history.component.html',
-  styleUrls: ['./history.component.css']
+  styleUrls: ['./history.component.css'],
 })
+export class HistoryComponent {
+  private readonly historyService = inject(HistoryService);
+  readonly histories = this.historyService.histories;
+  private readonly currentFilter = signal<string | null>(null);
 
-export class HistoryComponent implements OnInit{
+  readonly filteredHistories = computed(() => {
+    const filter = this.currentFilter();
+    const list = this.histories();
+    if (!filter) return list;
+    return list.filter((history) => history.action === filter);
+  });
 
-histories: History[] = [];
-filteredHistories: History[] = [];
-currentFilter: string | null = null;
-showClearConfirm: boolean = false;
+  showClearConfirm = false;
 
-constructor(
-  private historyService: HistoryService,
-  private cdr: ChangeDetectorRef
-){}
-
-ngOnInit() {
-      this.historyService.histories$.subscribe(histories => {
-        this.histories = histories;
-        this.cdr.detectChanges()
-        this.applyFilter();
-      });
-}
-
-onFilterChanged(action: string | null) {
-  this.currentFilter = action;
-  this.applyFilter();
-}
-
-applyFilter() {
-  if (!this.currentFilter) {
-    this.filteredHistories = this.histories;
-    return;
+  onFilterChanged(action: string | null) {
+    this.currentFilter.set(action);
   }
-  this.filteredHistories =
-    this.histories.filter(
-      history => history.action === this.currentFilter
-    );
-}
 
-confirm() {
-  this.showClearConfirm = true;
-}
+  confirm() {
+    this.showClearConfirm = true;
+  }
 
-clearHistory() {
-  this.historyService.clearHistories();
-  this.showClearConfirm = false;
-}
+  clearHistory() {
+    this.historyService.clearHistories();
+    this.showClearConfirm = false;
+  }
 
-cancelRemove() {
-  this.showClearConfirm = false;
-}
-
+  cancelRemove() {
+    this.showClearConfirm = false;
+  }
 }

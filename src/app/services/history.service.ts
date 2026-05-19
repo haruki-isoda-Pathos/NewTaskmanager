@@ -1,57 +1,50 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
 
 export interface History {
-    taskId: string;
-    taskTitle: string;
-  
-    action:
-      | 'create'
-      | 'edit'
-      | 'delete'
-      | 'status'
-      | 'deadline'
-      | 'remind'
-      | 'alarm';
-  
-    detail: string;
-  
-    createdAt: Date;
-  }
+  taskId: string;
+  taskTitle: string;
+
+  action:
+    | 'create'
+    | 'edit'
+    | 'delete'
+    | 'status'
+    | 'deadline'
+    | 'remind'
+    | 'alarm';
+
+  detail: string;
+
+  createdAt: Date;
+}
 
 @Injectable({ providedIn: 'root' })
 export class HistoryService {
+  private readonly historiesSignal = signal<History[]>(this.loadHistories());
+  readonly histories = this.historiesSignal.asReadonly();
 
-    private histories: History[] = this.loadHistories();
+  addHistory(history: History) {
+    this.historiesSignal.update((list) => [history, ...list]);
+    this.saveHistories();
+  }
 
-    private subject = new BehaviorSubject<History[]>(this.histories);
-    histories$ = this.subject.asObservable();
+  clearHistories() {
+    this.historiesSignal.set([]);
+    this.saveHistories();
+  }
 
-    addHistory(history: History) {
-        this.histories.unshift(history)
-        this.subject.next(this.histories);
-        this.saveHistories()
-      }
+  private loadHistories(): History[] {
+    const saved = localStorage.getItem('histories');
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    return [];
+  }
 
-    clearHistories() {
-        this.histories = [];
-        this.subject.next(this.histories);
-        this.saveHistories()
-      }
-
-    private loadHistories(): History[] {
-        const saved =
-          localStorage.getItem('histories');
-        if (saved) {
-          return JSON.parse(saved);
-        }
-        return [];
-      }
-
-    private saveHistories() {
-        localStorage.setItem(
-          'histories',
-          JSON.stringify(this.histories)
-        );
-      }
+  private saveHistories() {
+    localStorage.setItem(
+      'histories',
+      JSON.stringify(this.historiesSignal())
+    );
+  }
 }

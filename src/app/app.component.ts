@@ -4,6 +4,7 @@ import { TaskFormComponent } from './components/task-form/task-form.component';
 import { NotificationComponent } from './components/notification/notification.component';
 import { HistoryComponent } from './components/history/history.component'
 import { TaskModalComponent } from './components/task-modal/task-modal.component'
+import { TaskNotificationService } from './services/task-notification.service'
 
 @Component({
   selector: 'app-root',
@@ -19,5 +20,5 @@ import { TaskModalComponent } from './components/task-modal/task-modal.component
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  
+  constructor(_taskNotification: TaskNotificationService) {}
 }
