@@ -48,7 +48,7 @@ export class TaskIconComponent {
     if (this.isDragging) return '';
     let text = 'クリックして編集と削除\nドラッグでタスクのステータス変更';
     if (this.task.pinnedIndex != null) {
-      text += '\n※このタスクは手動で順位を固定中';
+      text += '\n※このタスクは手動で相対位置を固定中';
     }
     return text;
   }
