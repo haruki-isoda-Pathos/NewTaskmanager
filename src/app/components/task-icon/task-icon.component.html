@@ -5,9 +5,7 @@
  [cdkDragData]="task"
  (cdkDragStarted)="onDragStart()"
  (cdkDragEnded)="onDragEnd()"
- [appTooltip]="!isDragging 
- ? 'クリックして編集と削除\nドラッグでタスクのステータス変更'
- : ''"
+ [appTooltip]="tooltipText"
 >
 <button 
 type="button"

@@ -43,6 +43,15 @@ export class TaskIconComponent {
         return '-';
     }
   }
+
+  get tooltipText(): string {
+    if (this.isDragging) return '';
+    let text = 'クリックして編集と削除\nドラッグでタスクのステータス変更';
+    if (this.task.pinnedIndex != null) {
+      text += '\n※このタスクは手動で順位を固定中';
+    }
+    return text;
+  }
   
     onDragStart() {
       this.isDragging = true;

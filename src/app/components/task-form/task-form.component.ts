@@ -22,7 +22,6 @@ export class TaskFormComponent {
   notifyAfterMinutes: number | null = null;
   notifyBefore: number | null = null;
   priority = 1
-  manualOrder?: number;
 
    //UI用
    onKeydownLimit(event: KeyboardEvent, max: number) {
