@@ -49,7 +49,19 @@ export class TaskNotificationService {
 
          if (task.id === this.editingTaskId) return;
 
-        const due = task.deadline ? new Date(task.deadline).getTime() : null;
+        const due = task.deadline?.trim()
+          ? new Date(task.deadline).getTime()
+          : null;
+
+        if (due == null) {
+          if (
+            task.alertState === 'deadline' ||
+            task.alertState === 'remind'
+          ) {
+            task.alertState = null;
+            updated = true;
+          }
+        }
 
         if (task.notifyAfterMinutes != null && !task.notified) {
           const notifyTime =

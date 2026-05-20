@@ -48,7 +48,7 @@ export class TaskIconComponent {
     if (this.isDragging) return '';
     let text = 'クリックして編集と削除\nドラッグでタスクのステータス変更';
     if (this.task.pinnedIndex != null) {
-      text += '\n※このタスクは手動で相対位置を固定中';
+      text += '\n※ドラッグされたため相対位置を固定中';
     }
     return text;
   }
@@ -81,7 +81,7 @@ export class TaskIconComponent {
   
     const now = Date.now();
     // 期限超過（最優先）
-    if (this.task.deadline) {
+    if (this.task.deadline?.trim()) {
       const due = new Date(this.task.deadline).getTime();
       if (now >= due) {
         return 'red';

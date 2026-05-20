@@ -64,7 +64,7 @@ export class TaskFormComponent {
       id: crypto.randomUUID(),
       title: this.title,
       memo: this.memo,
-      deadline: this.deadline,
+      deadline: this.deadline?.trim() ? this.deadline.trim() : undefined,
       notifyAfterMinutes: this.notifyAfterMinutes,
       notifyBefore: this.notifyBefore,
       priority: this.priority,

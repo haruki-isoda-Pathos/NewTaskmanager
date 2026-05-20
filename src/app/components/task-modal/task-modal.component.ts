@@ -68,23 +68,49 @@ export class TaskModalComponent {
   }
   
   saveTask() {
+    const deadline = this.deadline?.trim() ? this.deadline.trim() : undefined;
+
     const updatedTask: Task = {
       ...this.task,
       title: this.title,
       memo: this.memo,
-      deadline: this.deadline,
+      deadline,
       notifyAfterMinutes: this.notifyAfterMinutes,
-      notifyBefore: this.notifyBefore,
+      notifyBefore: deadline ? this.notifyBefore : null,
       priority: this.priority,
     };
 
-    const changeAlarm = (this.task.notifyAfterMinutes != this.notifyAfterMinutes)
-    const changeDeadline = (this.task.deadline != this.deadline)
+    const changeAlarm = this.task.notifyAfterMinutes != this.notifyAfterMinutes;
+    const changeDeadline = (this.task.deadline ?? '') !== (deadline ?? '');
     if (changeAlarm) {
-      updatedTask.alarmBaseTime = Date.now()
-      updatedTask.notified = false
+      updatedTask.alarmBaseTime = Date.now();
+      updatedTask.notified = false;
     }
-    if (changeDeadline) updatedTask.reminded = false, updatedTask.deadlineNotified = false
+    if (changeDeadline) {
+      updatedTask.reminded = false;
+      updatedTask.deadlineNotified = false;
+      if (!deadline) {
+        if (
+          updatedTask.alertState === 'deadline' ||
+          updatedTask.alertState === 'remind'
+        ) {
+          updatedTask.alertState = null;
+        }
+      } else {
+        const due = new Date(deadline).getTime();
+        const now = Date.now();
+        if (now < due && updatedTask.alertState === 'deadline') {
+          updatedTask.alertState = null;
+        }
+        if (
+          updatedTask.notifyBefore != null &&
+          now < due - updatedTask.notifyBefore * 60 * 1000 &&
+          updatedTask.alertState === 'remind'
+        ) {
+          updatedTask.alertState = null;
+        }
+      }
+    }
 
     this.save.emit(updatedTask);
   }
