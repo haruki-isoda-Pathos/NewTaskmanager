@@ -57,9 +57,18 @@
       border-radius: 5px;
       border: 1px solid #ccc;
       font-size: 14px;
-      resize: none;        /* 手動リサイズ禁止 */
-      overflow: hidden;    /* スクロール非表示 */
+      resize: none;
+      overflow: hidden;
       min-height: 60px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    textarea.memo-field {
+      min-height: 80px;
+      max-height: 160px;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
     
     .char-count {

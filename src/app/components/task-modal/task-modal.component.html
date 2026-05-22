@@ -21,11 +21,13 @@
       <div class="form-group">
         <label>メモ(200字まで)</label>
         <textarea
+        class="memo-field"
         [(ngModel)]="memo" 
         name="memo" 
         placeholder="メモ" 
         (keydown)="onKeydownLimit($event, 200)"
-        maxlength="200"></textarea>
+        maxlength="200"
+        rows="4"></textarea>
   
         <div class="char-count">
           {{ memo?.length || 0 }} / 200
