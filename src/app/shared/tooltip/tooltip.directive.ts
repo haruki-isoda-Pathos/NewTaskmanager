@@ -3,7 +3,8 @@ import {
   Input,
   HostListener,
   ElementRef,
-  inject
+  inject,
+  OnDestroy,
 } from '@angular/core';
 
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
@@ -13,10 +14,10 @@ import { TooltipComponent } from './tooltip.component';
 
 @Directive({
   selector: '[appTooltip]',
-  standalone: true
+  standalone: true,
 })
-
-export class TooltipDirective {
+export class TooltipDirective implements OnDestroy {
+  private static readonly instances = new Set<TooltipDirective>();
 
   @Input('appTooltip') tooltipText: string = '';
 
@@ -24,39 +25,52 @@ export class TooltipDirective {
   private elementRef = inject(ElementRef);
   private overlayRef?: OverlayRef;
 
+  constructor() {
+    TooltipDirective.instances.add(this);
+  }
+
+  ngOnDestroy(): void {
+    TooltipDirective.instances.delete(this);
+    this.hide();
+  }
+
+  static dismissAll(): void {
+    for (const instance of TooltipDirective.instances) {
+      instance.hide();
+    }
+  }
+
   @HostListener('mouseenter')
   show() {
+    if (!this.tooltipText) {
+      return;
+    }
 
-    if (!this.tooltipText) return;
+    if (this.overlayRef) {
+      return;
+    }
 
-    if (this.overlayRef) return;
-
-    const positionStrategy = this.overlay.position()
+    const positionStrategy = this.overlay
+      .position()
       .flexibleConnectedTo(this.elementRef)
       .withPositions([
         {
           originX: 'center',
           originY: 'top',
-
           overlayX: 'center',
           overlayY: 'bottom',
-
-          offsetY: -8
-        }
+          offsetY: -8,
+        },
       ]);
 
-    this.overlayRef = this.overlay.create({
-      positionStrategy
-    });
+    this.overlayRef = this.overlay.create({ positionStrategy });
 
-    const tooltipPortal =
-      new ComponentPortal(TooltipComponent);
+    const componentRef = this.overlayRef.attach(
+      new ComponentPortal(TooltipComponent)
+    );
 
-    const componentRef =
-      this.overlayRef.attach(tooltipPortal);
-
-    componentRef.instance.text =
-      this.tooltipText;
+    componentRef.instance.text = this.tooltipText;
+    this.overlayRef.overlayElement.style.pointerEvents = 'none';
   }
 
   @HostListener('mouseleave')
@@ -66,7 +80,8 @@ export class TooltipDirective {
   }
 
   @HostListener('document:pointerdown')
-forceHide() {
-  this.hide();
-}
+  @HostListener('document:touchstart')
+  forceHide() {
+    this.hide();
+  }
 }

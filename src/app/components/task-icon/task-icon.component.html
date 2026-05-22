@@ -1,18 +1,10 @@
-<div 
- class="task-icon"
- [ngClass]="getColor()"
- cdkDrag
- [cdkDragData]="task"
- (cdkDragStarted)="onDragStart()"
- (cdkDragEnded)="onDragEnd()"
- [appTooltip]="tooltipText"
->
-<button 
-type="button"
-class="task-button-transparent"
-(click)="onClickTask()"
->
-<span class="sort" [ngClass]="priorityLabel">{{ priorityLabel }}</span>&ensp;{{ task.title }}
-</button>
-
+<div class="task-icon" [ngClass]="getColor()" [appTooltip]="tooltipText">
+  <button
+    type="button"
+    class="task-button-transparent"
+    (click)="onClickTask()"
+  >
+    <span class="sort" [ngClass]="priorityLabel">{{ priorityLabel }}</span
+    >&ensp;{{ task.title }}
+  </button>
 </div>
