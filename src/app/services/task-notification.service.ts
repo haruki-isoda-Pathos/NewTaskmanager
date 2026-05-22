@@ -63,6 +63,12 @@ export class TaskNotificationService {
           }
         }
 
+        if (task.notifyAfterMinutes == null && task.alertState === 'notify') {
+          task.alertState = null;
+          task.notified = false;
+          updated = true;
+        }
+
         if (task.notifyAfterMinutes != null && !task.notified) {
           const notifyTime =
             (task.alarmBaseTime ?? task.createdAt) +

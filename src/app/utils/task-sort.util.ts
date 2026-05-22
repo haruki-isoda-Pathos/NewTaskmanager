@@ -68,28 +68,64 @@ export function compareTasksInColumn(a: Task, b: Task): number {
   return compareTasksByRules(a, b);
 }
 
-export function clearLegacyManualOrder(task: Task): void {
-  delete task.manualOrder;
-  delete task.pinnedIndex;
+export function clearLegacyManualOrder(task: Task): Task {
+  const t = { ...task };
+  delete t.manualOrder;
+  delete t.pinnedIndex;
+  return t;
 }
 
-export function normalizeTaskForOrder(task: Task): Task {
-  const normalized = { ...task };
-  clearLegacyManualOrder(normalized);
+/** タスク内容に合わせて alertState を同期（編集後の再ソート用） */
+export function syncAlertStateForOrder(task: Task, now = Date.now()): Task {
+  const t = { ...task };
 
-  if (!normalized.deadline?.trim()) {
-    delete normalized.deadline;
-    normalized.reminded = false;
-    normalized.deadlineNotified = false;
-    if (
-      normalized.alertState === 'deadline' ||
-      normalized.alertState === 'remind'
-    ) {
-      normalized.alertState = null;
+  if (!t.deadline?.trim()) {
+    delete t.deadline;
+    t.reminded = false;
+    t.deadlineNotified = false;
+    if (t.alertState === 'deadline' || t.alertState === 'remind') {
+      t.alertState = null;
     }
   }
 
-  return normalized;
+  const due = t.deadline ? new Date(t.deadline).getTime() : null;
+
+  if (t.alertState === 'deadline') {
+    if (due == null || now < due) {
+      t.alertState = null;
+    }
+  }
+
+  if (t.alertState === 'remind') {
+    if (due == null || t.notifyBefore == null) {
+      t.alertState = null;
+    } else {
+      const remindTime = due - t.notifyBefore * 60 * 1000;
+      if (now < remindTime || now >= due) {
+        t.alertState = null;
+      }
+    }
+  }
+
+  if (t.notifyAfterMinutes == null) {
+    if (t.alertState === 'notify') {
+      t.alertState = null;
+    }
+    t.notified = false;
+  } else if (t.alertState === 'notify') {
+    const notifyTime =
+      (t.alarmBaseTime ?? t.createdAt) + t.notifyAfterMinutes * 60 * 1000;
+    if (now < notifyTime) {
+      t.alertState = null;
+    }
+  }
+
+  return t;
+}
+
+export function normalizeTaskForOrder(task: Task): Task {
+  const normalized = clearLegacyManualOrder({ ...task });
+  return syncAlertStateForOrder(normalized);
 }
 
 /** カラム内ソート（ルール順のみ） */
